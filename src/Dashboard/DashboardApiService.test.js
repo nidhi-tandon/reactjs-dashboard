@@ -51,15 +51,8 @@ test('should fetch users', () => {
           }
     };
 
-
-    // const actual = await getDashboardData()
-
-    // or you could use the following depending on your use case:
     mockAxios.get.mockImplementation(() => Promise.resolve(resp))
-
     mockAxios.get.mockResolvedValue(resp);
 
-
-    // return getDashboardData().then(users => expect(users.data).toEqual(resp.data));
 });
 

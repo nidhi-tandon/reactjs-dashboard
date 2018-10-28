@@ -2,14 +2,22 @@ import React, { Component } from 'react';
 import './Dashboard.css';
 import { Row, Col } from 'react-flexbox-grid';
 
-import getDashboardData from './DashboardApiService';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import DataCard from './components/DataCard';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import InputBase from '@material-ui/core/InputBase';
+import SearchIcon from '@material-ui/icons/Search';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Button from '@material-ui/core/Button';
 import InfoIcon from '@material-ui/icons/Info';
+import CancelIcon from '@material-ui/icons/Cancel';
+
+import getDashboardData from './DashboardApiService';
+import DataCard from './components/DataCard';
 import DataTable from './components/DataTable/DataTable';
+import CardComponent from './components/DataCard/components/Card/CardComponent';
 
 const theme = createMuiTheme({
     overrides: {
@@ -19,6 +27,11 @@ const theme = createMuiTheme({
             root: {
                 // Some CSS
                 backgroundColor: '#2196f3 !important',
+            },
+        },
+        MuiButton: { // Name of the component ⚛️ / style sheet
+            root: { // Name of the rule
+                color: 'white', // Some CSS
             },
         },
     },
@@ -36,11 +49,17 @@ class Dashboard extends Component {
          */
         this.state = {
             data: [],
-            searchedData: {},
-            clickedBatchArray: []
+            searchedData: '',
+            clickedBatchArray: [],
+            searchText: '',
+            anchorOrigin: null
         };
         this.getData = this.getData.bind(this);
-        this.showDocuments = this.showDocuments.bind(this);
+        this.showDocumentsBySetId = this.showDocumentsBySetId.bind(this);
+        this.handleInputFieldOnChange = this.handleInputFieldOnChange.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+        this.clearTableData = this.clearTableData.bind(this);
     }
 
     /**
@@ -63,16 +82,51 @@ class Dashboard extends Component {
         })
     }
 
+    handleInputFieldOnChange(event) {
+        this.setState({
+            searchText: event.target.value,
+            clickedBatchArray: [],
+        }, () => {
+            this.searchDataByValue(this.state.searchText)
+        })
+    }
+
+    handleClick(event) {
+        this.setState({
+            anchorOrigin: event.currentTarget
+        });
+    };
+
+    handleOnClickSortBy(value) {
+        this.handleClose();
+        this.sortDataByFieldName(value);
+    }
+
+    handleClose() {
+        this.setState({
+            anchorOrigin: null
+        });
+    };
+
+    clearTableData() {
+        this.setState({
+            clickedBatchArray: []
+        })
+    }
+
     /**
      * searchDataByValue searches the data from our state based on the value provided
      * @param {String} value
      */
     searchDataByValue(value) {
         this.state.data.forEach((object) => {
-            if ( Object.values(object).indexOf(value) > -1 ) {
-                this.setState({
-                    searchedData: object
-                })
+            for ( let objectValue of Object.values(object) ) {
+                if ( String(objectValue) === value ) {
+                    this.setState({
+                        searchedData: object
+                    });
+                    return
+                }
             }
         })
     }
@@ -90,15 +144,20 @@ class Dashboard extends Component {
         console.log(sortedData)
     }
 
-    showDocuments(setId) {
+    showDocumentsBySetId(setId) {
         let clickedBatchArray = [];
 
-        clickedBatchArray = this.state.data.find((batches) => {
-            return batches.set_id === setId;
-        });
         this.setState({
             clickedBatchArray
+        }, () => {
+            clickedBatchArray = this.state.data.find((batches) => {
+                return batches.set_id === setId;
+            });
+            this.setState({
+                clickedBatchArray
+            })
         })
+
     }
 
     render() {
@@ -110,28 +169,104 @@ class Dashboard extends Component {
                           <Typography variant="h6" color="inherit">
                               Dashboard
                           </Typography>
+                          <div className="grow"/>
+                          <div className="menu-container">
+                              <Button
+                                aria-owns={this.state.anchorOrigin ? 'simple-menu' : null}
+                                aria-haspopup="true"
+                                onClick={this.handleClick}
+                                data-test="sort-button"
+                              >
+                                  Sort By
+                              </Button>
+                              <MuiThemeProvider theme={theme}>
+                                  <Menu
+                                    id="simple-menu"
+                                    anchorEl={this.state.anchorOrigin}
+                                    open={Boolean(this.state.anchorOrigin)}
+                                    onClose={this.handleClose}
+                                  >
+                                      <MenuItem onClick={this.handleOnClickSortBy.bind(this, 'set_id')}>
+                                          Set Id
+                                      </MenuItem>
+                                      <MenuItem onClick={this.handleOnClickSortBy.bind(this, 'batch_id')}>
+                                          Batch Id
+                                      </MenuItem>
+                                      <MenuItem onClick={this.handleOnClickSortBy.bind(this, 'name')}>
+                                          Name
+                                      </MenuItem>
+                                      <MenuItem
+                                        onClick={this.handleOnClickSortBy.bind(this, 'status')}>
+                                          Status
+                                      </MenuItem>
+                                  </Menu>
+                              </MuiThemeProvider>
+                          </div>
+                          <div className="search" data-test="search-button">
+                              <div className="search-icon">
+                                  <SearchIcon/>
+                              </div>
+                              <InputBase
+                                placeholder="Search…"
+                                className="search-text"
+                                onChange={this.handleInputFieldOnChange}
+                              />
+                          </div>
                       </Toolbar>
                   </AppBar>
               </MuiThemeProvider>
-              {this.state.data &&
-              <DataCard data={this.state.data}
-                        showDocuments={this.showDocuments}
-              />
+
+              {(this.state.searchText && this.state.searchedData) ?
+                <Row>
+                    <Col xs={12}>
+                        <Row center="xs" className="searched-data">
+                            <CardComponent data={this.state.searchedData}
+                                           showDocuments={this.showDocumentsBySetId}
+                                           key={this.state.searchedData.set_id}
+                            />
+                        </Row>
+                    </Col>
+                </Row>
+                :
+                (this.state.data &&
+                  <DataCard data={this.state.data}
+                            showDocumentsBySetId={this.showDocumentsBySetId}
+                            searchedData={this.state.searchedData}
+                  />
+                )
               }
 
-              <Row className="row text-center">
-                  <Typography className="text-center">
-                      <InfoIcon className=""/>
-                      Click on Documents to get documents of a particular batch
-                  </Typography>
-              </Row>
 
-              <Row>
-                  {(this.state.clickedBatchArray && this.state.clickedBatchArray.documents) &&
-                  <DataTable documents={this.state.clickedBatchArray.documents}/>
-                  }
-              </Row>
+              {(this.state.clickedBatchArray && this.state.clickedBatchArray.documents) ?
+                <Row>
+                    <Col xs={12}>
+                        <Row center="xs" className="table-padding">
+                            <Col xs={12}>
+                                <div>
+                                    <CancelIcon onClick={this.clearTableData}/>
+                                    <DataTable documents={this.state.clickedBatchArray.documents}/>
+                                </div>
+                            </Col>
+                        </Row>
+                    </Col>
+                </Row>
+                :
 
+                <Row className="info-row">
+                    <Col xs={12}>
+                        <Row center="xs">
+                            <Col xs={6}>
+                                <Typography className="text-center">
+                                    <InfoIcon className="icon"/>
+                                    <div className="info-text">
+                                        Click on Documents to get documents of a particular batch
+                                    </div>
+                                </Typography>
+                            </Col>
+                        </Row>
+                    </Col>
+                </Row>
+              }
 
           </div>
         );

@@ -38,29 +38,17 @@ test('renders without crashing', () => {
     expect(dashboardComponent.length).toBe(1);
 });
 
-
-
-test('renders save button successfully', () => {
-    // const wrapper = setup();
-    // const saveButton = findByTestAttr(wrapper, 'save-button');
-    // expect(saveButton.length).toBe(1);
+test('renders search button successfully', () => {
+    const wrapper = setup();
+    const searchButton = findByTestAttr(wrapper, 'search-button');
+    expect(searchButton.length).toBe(1);
 });
 
-test('merchant name starts as empty string', () => {
-    // const wrapper = setup();
-    // const initialState = wrapper.state('merchantName');
-    // expect(initialState).toBe('');
+test('renders sort button successfully', () => {
+    const wrapper = setup();
+    const sortButton = findByTestAttr(wrapper, 'sort-button');
+    expect(sortButton.length).toBe(1);
 });
 
-test('clicking button sets merchant name', () => {
-    // const merchantName = 'abc';
-    // const wrapper = setup(null, { merchantName });
-    //
-    // // find button and click
-    // const saveButton = findByTestAttr(wrapper, 'save-button');
-    // saveButton.simulate('click');
-    //
-    // // find text field and display
-    // const merchantNameTextField = findByTestAttr(wrapper, 'merchant-name-text-field');
-    // expect(merchantNameTextField.text()).toContain(merchantName+'d');
-});
+
+

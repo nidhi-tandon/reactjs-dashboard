@@ -1,29 +1,78 @@
 .App {
-  /*text-align: center;*/
+    /*text-align: center;*/
 }
-.table-row{
-  padding: 24px;
+
+.table-row {
+    padding: 24px;
 }
-.text-center{
-  text-align: center;
+
+.text-center {
+    text-align: center;
 }
-.row {
-  padding: 24px 128px 24px 128px;
+
+.row-padding {
+    padding: 24px 128px 24px 128px;
 }
 
 .icon {
-  vertical-align: bottom;
-  font-size: 20px !important;
+    vertical-align: bottom;
+    font-size: 20px !important;
 }
 
 .title {
-  margin-left: 8px;
-  color: #262626;
-  opacity: 0.75;
-  display: inline-block;
+    margin-left: 8px;
+    color: #262626;
+    opacity: 0.75;
+    display: inline-block;
 }
 
 .text {
-  margin-left: 8px;
-  display: inline-block;
+    margin-left: 8px;
+    display: inline-block;
+}
+
+.table-padding {
+    padding: 24px;
+    text-align: right !important;
+}
+
+.info-row {
+    padding: 64px 24px 24px 24px;
+}
+
+.info-text {
+    display: inline-block;
+    color: #262626;
+    opacity: 0.75;
+    margin-left: 12px;
+}
+
+.grow {
+    flex-grow: 1;
+}
+
+.search-icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 8px;
+    color: rgba(0, 0, 0, 0.67);
+}
+
+.search {
+    background-color: white;
+    display: inline-block;
+    border-radius: 6px;
+}
+
+.search-text {
+    margin-left: 12px;
+}
+
+.searched-data {
+    text-align: left !important;
+    margin-top: 24px;
+}
+
+.menu-container {
+    margin-right: 24px;
 }
