@@ -1,23 +1,46 @@
 import React, { Component } from 'react';
 import './Dashboard.css';
-import getDashboardData from './DashboardApiService';
+import { Row, Col } from 'react-flexbox-grid';
 
+import getDashboardData from './DashboardApiService';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import DataCard from './components/DataCard';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import InfoIcon from '@material-ui/icons/Info';
+import DataTable from './components/DataTable/DataTable';
+
+const theme = createMuiTheme({
+    overrides: {
+        // Name of the component ⚛️ / style sheet
+        MuiAppBar: {
+            // Name of the rule
+            root: {
+                // Some CSS
+                backgroundColor: '#2196f3 !important',
+            },
+        },
+    },
+});
 
 /**
- * Dashboard component tp display the user interface
+ * Dashboard component to display the user interface
  */
-
 class Dashboard extends Component {
     constructor(props) {
         super(props);
+
         /**
          * React's local state
          */
-
         this.state = {
             data: [],
-            searchedData: {}
+            searchedData: {},
+            clickedBatchArray: []
         };
+        this.getData = this.getData.bind(this);
+        this.showDocuments = this.showDocuments.bind(this);
     }
 
     /**
@@ -67,22 +90,49 @@ class Dashboard extends Component {
         console.log(sortedData)
     }
 
+    showDocuments(setId) {
+        let clickedBatchArray = [];
+
+        clickedBatchArray = this.state.data.find((batches) => {
+            return batches.set_id === setId;
+        });
+        this.setState({
+            clickedBatchArray
+        })
+    }
+
     render() {
         return (
           <div className="App" data-test="component-dashboard">
-              <header className="App-header">
-                  <div onClick={this.sortDataByFieldName.bind(this, 'status')}>
-                      Edit <code>src/App.js</code> and save to reload.
-                  </div>
-                  <a
-                    className="App-link"
-                    href="https://reactjs.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                      Learn React
-                  </a>
-              </header>
+              <MuiThemeProvider theme={theme}>
+                  <AppBar position="static">
+                      <Toolbar>
+                          <Typography variant="h6" color="inherit">
+                              Dashboard
+                          </Typography>
+                      </Toolbar>
+                  </AppBar>
+              </MuiThemeProvider>
+              {this.state.data &&
+              <DataCard data={this.state.data}
+                        showDocuments={this.showDocuments}
+              />
+              }
+
+              <Row className="row text-center">
+                  <Typography className="text-center">
+                      <InfoIcon className=""/>
+                      Click on Documents to get documents of a particular batch
+                  </Typography>
+              </Row>
+
+              <Row>
+                  {(this.state.clickedBatchArray && this.state.clickedBatchArray.documents) &&
+                  <DataTable documents={this.state.clickedBatchArray.documents}/>
+                  }
+              </Row>
+
+
           </div>
         );
     }

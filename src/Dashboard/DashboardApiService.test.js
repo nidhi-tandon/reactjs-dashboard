@@ -1,14 +1,4 @@
-//
-//  DashboardApiService.test.js
-//  stride-assignment
-//
-//  Created by nidhitandon on 26/10/18 2:57 PM
-//  Copyright © 2018 stride-assignment. All rights reserved.
-//
-//  Keep up the good work :)
-//
 
-import React from 'react';
 import mockAxios from 'axios';
 
 jest.mock('axios');
