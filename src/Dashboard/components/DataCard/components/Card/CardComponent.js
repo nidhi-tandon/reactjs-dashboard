@@ -29,6 +29,10 @@ import CardContent from '@material-ui/core/CardContent';
  */
 class CardComponent extends Component {
 
+    /**
+     * handling on click on document and call the parent's function and gives set id as a param
+     * @param setId
+     */
     showDocuments(setId) {
         this.props.showDocuments(setId)
     }

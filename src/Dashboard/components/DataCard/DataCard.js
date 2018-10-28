@@ -14,6 +14,10 @@ class DataCard extends Component {
         this.showDocuments = this.showDocuments.bind(this);
     }
 
+    /**
+     * handling on click on document and call the parent's function and gives set id as a param
+     * @param setId
+     */
     showDocuments(setId) {
          this.props.showDocumentsBySetId(setId)
     }

@@ -144,6 +144,10 @@ class Dashboard extends Component {
         console.log(sortedData)
     }
 
+    /**
+     * function to show the documents list in the UI by setting the state
+     * @param setId
+     */
     showDocumentsBySetId(setId) {
         let clickedBatchArray = [];
 

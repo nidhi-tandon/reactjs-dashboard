@@ -24,6 +24,11 @@ class DataTable extends Component {
         this.handleChangePage = this.handleChangePage.bind(this);
     }
 
+    /**
+     * function to hanlde page change
+     * @param event
+     * @param page
+     */
     handleChangePage(event, page) {
         this.setState({
             page
